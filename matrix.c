@@ -211,32 +211,31 @@ void matrix_sum(pMatrix m, pMatrix v, int dim){
     }
 }
 
-
-pMatrix T(pMatrix m){
+void T(pMatrix m){
 //    pMatrix ma_copy = matrix_copy(m);
     return matrix_transpose(m);
 }
 
-pMatrix matrix_transpose(pMatrix m){
+void matrix_transpose(pMatrix m){
     int row = m->row;
     int col = m->col;
-    float data[row * col];
+    matrix data = make_matrix_zeros(col, row);
 
     for(int j = 0; j < col ;j ++){
         for(int i = 0; i < row; i++){
-            data[i + j * row] = m->values[i * col + j];
+            data.values[i + j * row] = m->values[i * col + j];
         }
 
     }
-//    for(int i = 0;i < row * col; i++)
-//        m->values[i] = data[i];
-    memcpy(m->values, data, row * col* sizeof(float));
+    matrix_copy(&(data), m);
+//    memcpy(m->values, data, row * col* sizeof(float));
     m->row = col;
     m->col = row;
+    free_matrix(&(data));
 }
 
-void matrix_copy(pMatrix ma, pMatrix mb){
-    if ((ma->row != mb->row) || (ma->col != mb->col)){
+void matrix_copy(const pMatrix ma, pMatrix mb){
+    if (ma->row * ma->col != mb->row * mb->col){
         fprintf(stderr, "matrix_copy() Matrix a shape must be equal Matrix b shape!\n");
         exit(-1);
     }
@@ -329,7 +328,7 @@ void matmul_subtract(pMatrix ma, pMatrix mb, pMatrix m_res){
     }
 }
 
-void matrix_add_vector(pMatrix m, pMatrix v){
+void matrix_add_vector_col(pMatrix m, pMatrix v){
     if ((m->col != v->col)){
         fprintf(stderr, "matrix_add_vector() Matrix m col must be equal Vector v col!\n");
         exit(-1);
@@ -345,7 +344,50 @@ void matrix_add_vector(pMatrix m, pMatrix v){
     }
 }
 
-void matrix_sub_vector(pMatrix m, pMatrix v){
+void matrix_add_vector_row(pMatrix m, pMatrix v){
+    if ((m->row != v->col)){
+        fprintf(stderr, "matrix_add_vector_row() Matrix m row must be equal Vector v col!\n");
+        exit(-1);
+    }
+    if ((v->row != 1)){
+        fprintf(stderr, "matrix_add_vector_row() Vector v row must be equal 1!\n");
+        exit(-1);
+    }
+    int row = m->row;
+    int col = m->col;
+    for(int i = 0;i < row * col; i++){
+        m->values[i] += v->values[i / col];
+    }
+}
+
+void matrix_add_vector(pMatrix m, pMatrix v, int dim){
+    if (dim == 0)
+        matrix_add_vector_row(m, v);
+    else if(dim == 1)
+        matrix_add_vector_col(m, v);
+    else{
+        fprintf(stderr, "Matrix add vector dim should be equal 0 or 1\n");
+        exit(-1);
+    }
+}
+
+void matrix_sub_vector_row(pMatrix m, pMatrix v){
+    if ((m->row != v->col)){
+        fprintf(stderr, "matrix_sub_vector() Matrix m col must be equal Vector v col!\n");
+        exit(-1);
+    }
+    if ((v->row != 1)){
+        fprintf(stderr, "matrix_sub_vector() Vector v row must be equal 1!\n");
+        exit(-1);
+    }
+    int row = m->row;
+    int col = m->col;
+    for(int i = 0;i < row * col; i++){
+        m->values[i] -= v->values[i / col];
+    }
+}
+
+void matrix_sub_vector_col(pMatrix m, pMatrix v){
     if ((m->col != v->col)){
         fprintf(stderr, "matrix_sub_vector() Matrix m col must be equal Vector v col!\n");
         exit(-1);
@@ -361,9 +403,36 @@ void matrix_sub_vector(pMatrix m, pMatrix v){
     }
 }
 
-void matrix_div_vector(pMatrix m, pMatrix v){
-    if ((m->col != v->col)){
-        fprintf(stderr, "matrix_div_vector() Matrix m col must be equal Vector v col!\n");
+void matrix_sub_vector(pMatrix m, pMatrix v, int dim){
+    if (dim == 0)
+        matrix_sub_vector_row(m, v);
+    else if(dim == 1)
+        matrix_sub_vector_col(m, v);
+    else{
+        fprintf(stderr, "Matrix div vector dim should be equal 0 or 1\n");
+        exit(-1);
+    }
+}
+
+void matrix_div_vector_row(pMatrix m, pMatrix v){
+    if ((m->row != v->col)){
+        fprintf(stderr, "matrix_div_vector() Matrix m row must be equal Vector v col!\n");
+        exit(-1);
+    }
+    if ((v->row != 1)){
+        fprintf(stderr, "matrix_div_vector() Vector v row must be equal 1!\n");
+        exit(-1);
+    }
+    int row = m->row;
+    int col = m->col;
+    for(int i = 0;i < row * col; i++){
+        m->values[i] /= v->values[i / col];
+    }
+}
+
+void matrix_div_vector_col(pMatrix m, pMatrix v){
+    if ((m->row != v->col)){
+        fprintf(stderr, "matrix_div_vector() Matrix m row must be equal Vector v col!\n");
         exit(-1);
     }
     if ((v->row != 1)){
@@ -374,6 +443,17 @@ void matrix_div_vector(pMatrix m, pMatrix v){
     int col = m->col;
     for(int i = 0;i < row * col; i++){
         m->values[i] /= v->values[i % col];
+    }
+}
+
+void matrix_div_vector(pMatrix m, pMatrix v, int dim){
+    if (dim == 0)
+        matrix_div_vector_row(m, v);
+    else if(dim == 1)
+        matrix_div_vector_col(m, v);
+    else{
+        fprintf(stderr, "Matrix div vector dim should be equal 0 or 1\n");
+        exit(-1);
     }
 }
 
@@ -490,5 +570,23 @@ void matrix_normal(pMatrix m){
 
     for(int i = 0; i < row * col; i++)
         m->values[i] = stand_normal();
+}
+
+float at(pMatrix m, int x, int y){
+    int row = m->row;
+    int col = m->col;
+    if((x < 0) || (y < 0) || (x >= row) || (y >= col))
+        return 0.0;
+    return m->values[x * col + y];
+}
+
+void matrix_set(pMatrix m, int x, int y, float value){
+    int row = m->row;
+    int col = m->col;
+    if((x < 0) || (y < 0) || (x >= row) || (y >= col)){
+        fprintf(stderr, "matrix set error! %d, %d, %d, %d\n", x, y, row, col);
+        exit(0);
+    }
+    m->values[x * col + y] = value;
 }
 

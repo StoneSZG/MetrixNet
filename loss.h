@@ -10,5 +10,6 @@
 float mean_sequare_error(pMatrix, pMatrix);
 float cross_entropy_error(pMatrix, pMatrix);
 float mean_absolute_error(pMatrix, pMatrix);
+float softmax_with_cross_entropy_error(pMatrix pre, pMatrix y);
 
 #endif //METRIXNET_LOSS_H

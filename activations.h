@@ -31,5 +31,6 @@ float sigmoid_gradient(float x);
 float exp_activate(float x);
 float abs_activate(float x);
 float abs_gradient(float x);
+float log_gradient(float);
 
 #endif //METRIXNET_ACTIVATIONS_H

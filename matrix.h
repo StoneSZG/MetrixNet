@@ -41,9 +41,9 @@ void free_matrix(pmatrix);
 //void print_matrix(matrix);
 void print_matrix(pmatrix);
 
-pMatrix T(pMatrix);
+void T(pMatrix);
 
-pMatrix matrix_transpose(pMatrix);
+void matrix_transpose(pMatrix);
 
 Matrix matrix_dot(pMatrix, pMatrix);
 
@@ -55,15 +55,17 @@ void matrix_sub(pMatrix, pMatrix);
 
 void matmul_subtract(pMatrix, pMatrix, pMatrix);
 
-void matrix_add_vector(pMatrix, pMatrix);
+void matrix_add_vector(pMatrix, pMatrix, int);
 
-void matrix_sub_vector(pMatrix, pMatrix);
+void matrix_sub_vector(pMatrix, pMatrix, int);
 
-void matrix_div_vector(pMatrix, pMatrix);
+void matrix_div_vector(pMatrix, pMatrix, int);
 
 void matrix_additive_vector(pMatrix, pMatrix, pMatrix);
 
 void matrix_matmul(pMatrix, pMatrix, pMatrix);
+
+void matrix_mul(pMatrix, pMatrix);
 
 void matrix_multiply(pMatrix, pMatrix, pMatrix);
 
@@ -74,5 +76,9 @@ void matrix_map(pMatrix,  float(*)(float));
 void matrix_mapfunc(pMatrix, pMatrix, float(*)(float));
 
 void matrix_scale(pMatrix, float);
+
+void matrix_set(pMatrix, int, int, float);
+
+
 
 #endif //METRIXNET_MATRIX_H
