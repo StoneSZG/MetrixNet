@@ -12,6 +12,7 @@ Layer make_fully_connected_layer(int batch_size, int input, int output, int use_
     l.output = make_matrix_zeros(batch_size, output);
     l.delta = make_matrix_zeros(batch_size, output);
     l.weight = make_matrix_normal(input, output);
+//    l.weight = make_matrix_ones(input, output);
     l.update_weight = make_matrix_zeros(input, output);
     if(use_bias){
         l.bias = make_matrix_zeros(1, output);
@@ -27,6 +28,7 @@ Layer make_fully_connected_layer(int batch_size, int input, int output, int use_
 }
 
 void fully_connected_forward(player l){
+    matrix_fill(&(l->output), 0);
     matrix_matmul(&(l->input), &(l->weight), &(l->output));
     if(l->use_bias){
         matrix_add_vector(&(l->output), &(l->bias), 1);
@@ -36,7 +38,6 @@ void fully_connected_forward(player l){
 void fully_connected_backward(player l){
     if(l->use_bias){
         matrix_sum(&(l->delta), &(l->update_bias), 0);
-//        matrix_sub_vector(&(l->output), &(l->bias), 1);
     }
 
 //    printf("fully_connected_backward: update_bias\n");

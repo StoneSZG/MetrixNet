@@ -33,12 +33,10 @@ void relu_forward(pLayer l){
 void relu_backward(pLayer l){
     int row = l->output.row;
     int col = l->output.col;
-//    printf("relu_backward: input\n");
-//    print_matrix(&(l->output));
-    array_apply(l->output.values, row * col, relu_gradient, l->delta.values);
-//    printf("relu_backward: delta\n");
-//    print_matrix(&(l->delta));
-//    exit(0);
+
+    array_apply(l->input.values, row * col, relu_gradient, l->delta.values);
+    matrix_copy(&(l->delta), &(l->input));
+
 }
 
 Layer make_sigmoid_layer(int batch_size, int input){
@@ -151,7 +149,7 @@ float hardtan_activate(float x) {
 float linear_activate(float x){return x;}
 float sigmoid_activate(float x){return 1. / (1. + exp(-x));}
 float loggy_activate(float x){return 2. / (1. + exp(-x)) - 1;}
-float relu_activate(float x){return x * (x >= 0);}
+float relu_activate(float x){return x * (x > 0);}
 float elu_activate(float x){return (x >= 0) * x + (x < 0) * (exp(x) - 1);}
 float relie_activate(float x){return (x > 0) ? x : .01 * x;}
 float ramp_activate(float x){return x * (x > 0) + .1 * x;}

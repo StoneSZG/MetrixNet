@@ -94,7 +94,8 @@ float softmax_with_cross_entropy_error(pMatrix pre, pMatrix y){
     int col = pre->col;
 
 //    printf("softmax_with_cross_entropy_error:\n");
-
+//    Matrix m = make_matrix_zeros(pre->row, pre->col);
+//    matrix_copy(pre, &m);
     matrix_softmax(pre);
 
     float value = 0.0;
@@ -106,8 +107,9 @@ float softmax_with_cross_entropy_error(pMatrix pre, pMatrix y){
 //        printf("loss: %0.8f %0.8f %0.8f\n", loss, log(value), value);
         loss += - y->values[i] * log(value);
     }
-
+//    print_matrix(pre);
     matrix_sub(pre, y);
+//    print_matrix(pre);
 //    printf("loss: %0.2f\n", loss);
     loss /= (row * col);
     return loss;
