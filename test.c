@@ -7,6 +7,7 @@
 #include "test.h"
 #include "loss.h"
 #include "data.h"
+#include "utils.h"
 #include "layer.h"
 #include "matrix.h"
 #include "activations.h"
@@ -82,11 +83,12 @@ void dnn_test(){
 
 void dnn_mnist(){
     int length = 5;
-    int n_epochs = 10000;
+    int n_epochs = 5000;
     Layer ls[7] = {0};
-    int batch = 50;
+    int batch = 100;
     float leanring_rate = 1e-3;
     float loss = 0.0;
+    float accuracy = 0.0;
 
     char *filename = "../data/train.csv";
     FILE *fp = fopen(filename, "r");
@@ -98,11 +100,13 @@ void dnn_mnist(){
     Matrix m_x = make_matrix_zeros(batch, 784);
     Matrix m_y = make_matrix_zeros(batch, 10);
 
-    ls[0] = make_fully_connected_layer(batch, 784, 1000, 0);
+    ls[0] = make_fully_connected_layer(batch, 784, 1000, 1);
     ls[1] = make_relu_layer(batch, 1000);
-    ls[2] = make_fully_connected_layer(batch, 1000, 512, 0);
+//    ls[1] = make_sigmoid_layer(batch, 1000);
+    ls[2] = make_fully_connected_layer(batch, 1000, 512, 1);
     ls[3] = make_relu_layer(batch, 512);
-    ls[4] = make_fully_connected_layer(batch, 512, 10, 0);
+//    ls[3] = make_sigmoid_layer(batch, 512);
+    ls[4] = make_fully_connected_layer(batch, 512, 10, 1);
 
     for(int k = 0; k < n_epochs; k++) {
         matrix_fill(&m_y, 0);
@@ -115,48 +119,36 @@ void dnn_mnist(){
                 matrix_copy(&(ls[i - 1].output), &(ls[i].input));
             }
             ls[i].forward(&(ls[i]));
-//            printf("%d layer %d: delta:\n", k, i);
-//            print_matrix(&(ls[i].output));
         }
 
-
-//        printf("network output:\n");
+//        printf("%d output:\n", k);
 //        print_matrix(&(ls[length - 1].output));
-
+        accuracy = compute_accuracy(&(ls[length - 1].output), &m_y);
         loss = softmax_with_cross_entropy_error(&(ls[length - 1].output), &m_y);
         matrix_copy(&(ls[length - 1].output), &(ls[length - 1].delta));
 
-//        matrix_fill(&(ls[length - 1].delta), 1.0);
-
-//        printf("network delta:\n");
-//        print_matrix(&(ls[length - 1].delta));
-
-//        printf("network m_y:\n");
-//        print_matrix(&m_y);
-//        exit(0);
+//        printf("%d output:\n", k);
+//        print_matrix(&(ls[length - 1].output));
 
 //        printf("softmax_with_cross_entropy_error:\n");
 
-        if ((k % 100) == 0) {
+        if ((k % 50) == 0) {
 //            printf("Output:\n");
 //            print_matrix(&(ls[length - 1].output));
-            printf("epches %d :loss is :%0.4f\n", k, loss);
+            printf("epches %d:loss is :%0.4f accuracy is :%0.2f\n", k, loss, accuracy);
         }
-
-//        printf("%d delta:\n", k);
-//        print_matrix(&(ls[length - 1].delta));
 
         for (int i = length - 1; i >= 0; i--) {
 //            printf("layer: %d \n", i);
             if (i < length - 1) {
                 matrix_copy(&(ls[i + 1].input), &(ls[i].delta));
             }
-//            printf("layer %d backward: delta\n", i);
+//            printf("%d backward delta:\n", i);
 //            print_matrix(&(ls[i].delta));
             ls[i].backward(&(ls[i]));
-//            printf("layer %d backward: input\n", i);
-//            print_matrix(&(ls[i].input));
-
+//            printf("%d update_bias:\n", i);
+//            print_matrix(&(ls[i].update_bias));
+//
         }
 
         for (int i = 0; i < length; i++) {

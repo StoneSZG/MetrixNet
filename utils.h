@@ -17,6 +17,8 @@ float stand_normal();
 
 void matrix_softmax(pMatrix);
 
+float compute_accuracy(pMatrix pre, pMatrix y);
+
 void im2col(float*, int, int, int, int, int, int, float*);
 float im2col_get(float*, int, int, int, int, int, int);
 void col2im_set(float*, int, int, int, int, int, int, float);

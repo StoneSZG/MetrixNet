@@ -2,12 +2,15 @@
 // Created by Szg on 2018/6/12.
 //
 
-
+#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 
 #include "utils.h"
+#include "matrix.h"
 #include "activations.h"
+
+#define INF 0x7fffffff
 
 float normal_distribution(float mean, float std){
     static int sign = 0;
@@ -77,6 +80,40 @@ void im2col(float* im, int channels,  int height,  int width,
 
 }
 
+float compute_accuracy(pMatrix pre, pMatrix y){
+    int row = pre->row;
+    int col = pre->col;
+    int pre_argmax = 0;
+    int y_argmax = 0;
+    float pre_max = -INF;
+    float y_max = -INF;
+    float accuracy = 0.0;
+
+    for(int i = 0;i < row; i++){
+        pre_max = -INF;
+        y_max = -INF;
+//        accuracy = 0.0;
+        for(int j = 0;j < col; j++){
+            float pre_j = matrix_at(pre, i, j);
+            float y_j = matrix_at(y, i, j);
+            if(pre_max < pre_j){
+                pre_max = pre_j;
+                pre_argmax = j;
+            }
+            if(y_max < y_j){
+                y_max = y_j;
+                y_argmax = j;
+            }
+
+        }
+        if(pre_argmax == y_argmax){
+//            printf("pre_argmax:%d, y_argmax:%d", pre_argmax, y_argmax);
+            accuracy += 1;
+        }
+
+    }
+    return accuracy / row;
+}
 
 float im2col_get(float* m, int height, int width,
                  int row, int col, int c, int pad){

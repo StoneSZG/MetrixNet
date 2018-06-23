@@ -36,7 +36,7 @@ Matrix make_matrix_ones(size_t row, size_t col){
     matrix m = make_matrix(row, col);
 //    printf("make_matrix_ones m row:%d, col:%d\n", m.row, m.col);
     for(size_t i = 0; i < row * col; i++){
-        m.values[i] = 1;
+        m.values[i] = 1.0;
     }
 
     return m;
@@ -302,7 +302,7 @@ void matrix_additive(pMatrix ma, pMatrix mb, pMatrix m_res){
 
 }
 
-void matrix_sub(pMatrix ma, const pMatrix mb){
+void matrix_sub(pMatrix ma, pMatrix mb){
     if ((ma->row != mb->row) || (ma->col != mb->col)){
         fprintf(stderr, "matrix_sub() Matrix a shape must be equal Matrix b shape!\n");
         exit(-1);
@@ -572,7 +572,7 @@ void matrix_normal(pMatrix m){
         m->values[i] = stand_normal();
 }
 
-float at(pMatrix m, int x, int y){
+float matrix_at(pMatrix m, int x, int y){
     int row = m->row;
     int col = m->col;
     if((x < 0) || (y < 0) || (x >= row) || (y >= col))

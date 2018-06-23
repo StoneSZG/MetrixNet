@@ -1,9 +1,10 @@
 //
-// Created by Administrator on 2018/6/20.
+// Created by Szg on 2018/6/20.
 //
 
 #ifndef METRIXNET_POOL_H
 #define METRIXNET_POOL_H
+
 
 #include "layer.h"
 

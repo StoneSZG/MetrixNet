@@ -77,6 +77,8 @@ void matrix_mapfunc(pMatrix, pMatrix, float(*)(float));
 
 void matrix_scale(pMatrix, float);
 
+float matrix_at(pMatrix m, int x, int y);
+
 void matrix_set(pMatrix, int, int, float);
 
 
