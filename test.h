@@ -4,7 +4,10 @@
 
 #ifndef METRIXNET_TEST_H
 #define METRIXNET_TEST_H
+void cnn_mnist();
 void dnn_mnist();
+
 void dnn_test();
+
 
 #endif //METRIXNET_TEST_H

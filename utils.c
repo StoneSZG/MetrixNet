@@ -13,24 +13,29 @@
 #define INF 0x7fffffff
 
 float normal_distribution(float mean, float std){
-    static int sign = 0;
-    static float U, V;
-    if(sign){
-        sign = 0;
-        float value = sqrt(U)* sin(V);
+    static int haveSpare = 0;
+    static double rand1, rand2;
+
+    if(haveSpare)
+    {
+        haveSpare = 0;
+        float value = sqrt(rand1) * sin(rand2);
         return mean + value * std;
     }
-    sign = 1;
-    float rand1 = rand() / (RAND_MAX + 1.0);
-    float rand2 = rand() / (RAND_MAX + 1.0);
-    U = -2.0 * log(rand1);
-    V = 2.0 * PI * rand2;
-    float value = sqrt(U)* cos(V);
+
+    haveSpare = 1;
+
+    rand1 = rand() / ((double) RAND_MAX);
+    if(rand1 < 1e-100) rand1 = 1e-100;
+    rand1 = -2 * log(rand1);
+    rand2 = (rand() / ((double) RAND_MAX)) * TWO_PI;
+
+    float value =  sqrt(rand1) * cos(rand2);
     return mean + value * std;
 }
 
 float stand_normal(){
-    return normal_distribution(0, 0.1);
+    return normal_distribution(0, 1.0);
 }
 
 float uniform_distribution(float min, float max){

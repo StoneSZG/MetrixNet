@@ -23,10 +23,19 @@ Matrix make_matrix(size_t row, size_t col){
     return m;
 }
 
+Matrix make_matrix_normal_mean_std(size_t row, size_t col, float mean, float std){
+    matrix m = make_matrix(row, col);
+    for(size_t i = 0; i < row * col; i++){
+        m.values[i] = normal_distribution(mean, std);
+    }
+
+    return m;
+}
+
 Matrix make_matrix_normal(size_t row, size_t col){
     matrix m = make_matrix(row, col);
     for(size_t i = 0; i < row * col; i++){
-        m.values[i] = stand_normal();
+        m.values[i] = normal_distribution(0, 0.1);
     }
 
     return m;
@@ -99,7 +108,7 @@ void print_matrix(pmatrix m){
     for(int i = 0; i < row; ++i){
         printf("| ");
         for(int j = 0; j < col; ++j){
-            printf("%10.6f |", m->values[i * col + j]);
+            printf("%10.8f |", m->values[i * col + j]);
         }
         printf("\n");
         printf("|");
@@ -109,10 +118,12 @@ void print_matrix(pmatrix m){
 }
 
 void free_matrix(pMatrix m){
+//    printf("free_matrix:\n");
     free(m->values);
+//    printf("free success:\n");
 }
 
-void matrix_fill(pMatrix m, int value){
+void matrix_fill(pMatrix m, float value){
 
     int row = m->row;
     int col = m->col;
@@ -219,19 +230,24 @@ void T(pMatrix m){
 void matrix_transpose(pMatrix m){
     int row = m->row;
     int col = m->col;
-    matrix data = make_matrix_zeros(col, row);
+//    matrix data = make_matrix_zeros(col, row);
+    float *data = malloc(col * row * sizeof(float));
 
     for(int j = 0; j < col ;j ++){
         for(int i = 0; i < row; i++){
-            data.values[i + j * row] = m->values[i * col + j];
+            data[i + j * row] = m->values[i * col + j];
         }
 
     }
-    matrix_copy(&(data), m);
+//    matrix_copy(&(data), m);
+    for(int i = 0;i < row * col; i++){
+        m->values[i] = data[i];
+    }
 //    memcpy(m->values, data, row * col* sizeof(float));
     m->row = col;
     m->col = row;
-    free_matrix(&(data));
+//    free_matrix(&(data));
+    free(data);
 }
 
 void matrix_copy(const pMatrix ma, pMatrix mb){
@@ -272,7 +288,7 @@ Matrix matrix_dot(pMatrix ma, pMatrix mb){
 
 }
 
-void matrix_add(pMatrix ma, pMatrix mb){
+void matrix_add(pMatrix ma, const pMatrix mb){
 //    assert ((ma->row == mb->row) && (ma->col == mb->col));
     if ((ma->row != mb->row) || (ma->col != mb->col)){
         fprintf(stderr, "matrix_add() Matrix a shape must be equal Matrix b shape!\n");

@@ -11,6 +11,7 @@ Layer make_fully_connected_layer(int batch_size, int input, int output, int use_
     l.input = make_matrix_zeros(batch_size, input);
     l.output = make_matrix_zeros(batch_size, output);
     l.delta = make_matrix_zeros(batch_size, output);
+//    l.weight = make_matrix_normal_mean_std(input, output, 0, 0.01);
     l.weight = make_matrix_normal(input, output);
 //    l.weight = make_matrix_ones(input, output);
     l.update_weight = make_matrix_zeros(input, output);

@@ -33,8 +33,10 @@ void relu_forward(pLayer l){
 void relu_backward(pLayer l){
     int row = l->output.row;
     int col = l->output.col;
-
+//
     array_apply(l->input.values, row * col, relu_gradient, l->delta.values);
+
+//    matrix_mapfunc(&(l->output), &(l->input), relu_gradient);
     matrix_copy(&(l->delta), &(l->input));
 
 }
@@ -60,9 +62,21 @@ void sigmoid_forward(pLayer l){
 
 
 void sigmoid_backward(pLayer l){
+//    matrix_mapfunc(&(l->output), &(l->input), sigmoid_gradient);
+//    int row = l->output.row;
+//    int col = l->output.col;
+////
+//    array_apply(l->input.values, row * col, sigmoid_gradient, l->delta.values);
+
+//    matrix_mapfunc(&(l->delta), &(l->input), sigmoid_gradient);
+//    matrix_copy(&(l->delta), &(l->input));
     int row = l->output.row;
     int col = l->output.col;
+//
     array_apply(l->output.values, row * col, sigmoid_gradient, l->delta.values);
+
+//    matrix_mapfunc(&(l->output), &(l->input), relu_gradient);
+    matrix_copy(&(l->delta), &(l->input));
 }
 
 Layer make_softmax_layer(int batch_size, int input){
@@ -185,7 +199,7 @@ float stair_gradient(float x) {
     if (floor(x) == x) return 0;
     return 1;
 }
-float relu_gradient(float x){return (x >= 0);}
+float relu_gradient(float x){return (x > 0);}
 float elu_gradient(float x){return (x >= 0) + (x < 0)*(x + 1);}
 float relie_gradient(float x){return (x>0) ? 1 : .01;}
 float ramp_gradient(float x){return (x>0)+.1;}

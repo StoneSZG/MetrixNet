@@ -15,6 +15,7 @@ typedef struct matrix {
 
 Matrix make_matrix(size_t, size_t);
 Matrix make_matrix_normal(size_t, size_t);
+Matrix make_matrix_normal_mean_std(size_t, size_t, float, float);
 Matrix make_matrix_ones(size_t, size_t);
 Matrix make_matrix_zeros(size_t, size_t);
 Matrix make_matrix_eyes(size_t);
@@ -34,7 +35,7 @@ void matrix_sum(pMatrix, pMatrix, int);
 //void matrix_sum_row(pMatrix, pMatrix);
 //void matrix_sum_col(pMatrix m, pMatrix v);
 
-void matrix_fill(pMatrix, int);
+void matrix_fill(pMatrix, float);
 
 void free_matrix(pmatrix);
 
