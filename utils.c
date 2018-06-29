@@ -74,13 +74,10 @@ void im2col(float* im, int channels,  int height,  int width,
             for(int w = 0; w < width_col; w++){
                 int im_row = w_offset + h * stride;
                 int im_col = h_offset + w * stride;
-//                printf("im row: %d, col:%d ", im_row, im_col);
                 int col_index = (c * height_col + h) * width_col + w;
                 float value = im2col_get(im, height, width, im_row, im_col, c_im, pad);
-//                printf("%d:%0.2f, ", col_index, value);
                 col[col_index] = value;
             }
-//        printf("\n");
     }
 
 }
@@ -97,7 +94,6 @@ float compute_accuracy(pMatrix pre, pMatrix y){
     for(int i = 0;i < row; i++){
         pre_max = -INF;
         y_max = -INF;
-//        accuracy = 0.0;
         for(int j = 0;j < col; j++){
             float pre_j = matrix_at(pre, i, j);
             float y_j = matrix_at(y, i, j);
@@ -112,7 +108,6 @@ float compute_accuracy(pMatrix pre, pMatrix y){
 
         }
         if(pre_argmax == y_argmax){
-//            printf("pre_argmax:%d, y_argmax:%d", pre_argmax, y_argmax);
             accuracy += 1;
         }
 
@@ -155,14 +150,10 @@ void col2im(float* col, int channels,  int height,  int width,
             for(int w = 0; w < width_col; w++){
                 int im_row = w_offset + h * stride;
                 int im_col = h_offset + w * stride;
-//                printf("im row: %d, col:%d ", im_row, im_col);
                 int col_index = (c * height_col + h) * width_col + w;
                 float val = col[col_index];
                 col2im_set(im, height, width, im_row, im_col, c_im, pad, val);
-//                printf("%d:%0.2f, ", col_index, value);
-//                col[col_index] = value;
             }
-//        printf("\n");
     }
 
 }
